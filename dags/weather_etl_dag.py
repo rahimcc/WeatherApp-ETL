@@ -13,9 +13,9 @@ import os
 CITIES = ['London','Istanbul','Baku','Tokyo','New York']
 CITIES = ['Baku']
 
-#API_KEY = os.environ["OPENWEATHER_API_KEY"]
+API_KEY = os.environ["OPENWEATHER_API_KEY"]
 
-API_KEY = '82a1ddbac7c82bbf9db7c4afa01c2ab6'
+#API_KEY = '82a1ddbac7c82bbf9db7c4afa01c2ab6'
 
 DB_CONN = "postgrsql://rahimsharifov:root@host.docker.internal:5432/airflow"
 

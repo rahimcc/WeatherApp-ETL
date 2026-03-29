@@ -3946,3 +3946,45 @@ Traceback (most recent call last):
 ModuleNotFoundError: No module named 'airflow.providers.standard'
 [2026-03-29T05:48:40.499+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/weather_etl_dag.py
 [2026-03-29T05:48:40.541+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/weather_etl_dag.py took 0.066 seconds
+[2026-03-29T05:49:11.050+0000] {processor.py:161} INFO - Started process (PID=515) to work on /opt/airflow/dags/weather_etl_dag.py
+[2026-03-29T05:49:11.053+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/weather_etl_dag.py for tasks to queue
+[2026-03-29T05:49:11.072+0000] {logging_mixin.py:188} INFO - [2026-03-29T05:49:11.070+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/weather_etl_dag.py
+[2026-03-29T05:49:11.100+0000] {logging_mixin.py:188} INFO - [2026-03-29T05:49:11.093+0000] {dagbag.py:348} ERROR - Failed to import: /opt/airflow/dags/weather_etl_dag.py
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/dagbag.py", line 344, in parse
+    loader.exec_module(new_module)
+  File "<frozen importlib._bootstrap_external>", line 843, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/opt/airflow/dags/weather_etl_dag.py", line 2, in <module>
+    from airflow.providers.standard.operators.python import PythonOperator
+ModuleNotFoundError: No module named 'airflow.providers.standard'
+[2026-03-29T05:49:11.101+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/weather_etl_dag.py
+[2026-03-29T05:49:11.175+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/weather_etl_dag.py took 0.144 seconds
+[2026-03-29T05:49:41.485+0000] {processor.py:161} INFO - Started process (PID=516) to work on /opt/airflow/dags/weather_etl_dag.py
+[2026-03-29T05:49:41.486+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/weather_etl_dag.py for tasks to queue
+[2026-03-29T05:49:41.493+0000] {logging_mixin.py:188} INFO - [2026-03-29T05:49:41.492+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/weather_etl_dag.py
+[2026-03-29T05:49:41.501+0000] {logging_mixin.py:188} INFO - [2026-03-29T05:49:41.499+0000] {dagbag.py:348} ERROR - Failed to import: /opt/airflow/dags/weather_etl_dag.py
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/dagbag.py", line 344, in parse
+    loader.exec_module(new_module)
+  File "<frozen importlib._bootstrap_external>", line 843, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/opt/airflow/dags/weather_etl_dag.py", line 2, in <module>
+    from airflow.providers.standard.operators.python import PythonOperator
+ModuleNotFoundError: No module named 'airflow.providers.standard'
+[2026-03-29T05:49:41.501+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/weather_etl_dag.py
+[2026-03-29T05:49:41.554+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/weather_etl_dag.py took 0.080 seconds
+[2026-03-29T05:50:05.158+0000] {processor.py:161} INFO - Started process (PID=517) to work on /opt/airflow/dags/weather_etl_dag.py
+[2026-03-29T05:50:05.161+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/weather_etl_dag.py for tasks to queue
+[2026-03-29T05:50:05.173+0000] {logging_mixin.py:188} INFO - [2026-03-29T05:50:05.171+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/weather_etl_dag.py
+[2026-03-29T05:50:05.202+0000] {logging_mixin.py:188} INFO - [2026-03-29T05:50:05.196+0000] {dagbag.py:348} ERROR - Failed to import: /opt/airflow/dags/weather_etl_dag.py
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/models/dagbag.py", line 344, in parse
+    loader.exec_module(new_module)
+  File "<frozen importlib._bootstrap_external>", line 843, in exec_module
+  File "<frozen importlib._bootstrap>", line 219, in _call_with_frames_removed
+  File "/opt/airflow/dags/weather_etl_dag.py", line 2, in <module>
+    from airflow.providers.standard.operators.python import PythonOperator
+ModuleNotFoundError: No module named 'airflow.providers.standard'
+[2026-03-29T05:50:05.204+0000] {processor.py:842} WARNING - No viable dags retrieved from /opt/airflow/dags/weather_etl_dag.py
+[2026-03-29T05:50:05.329+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/weather_etl_dag.py took 0.199 seconds
