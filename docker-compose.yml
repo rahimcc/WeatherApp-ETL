@@ -16,7 +16,7 @@ services:
     image: redis:7
 
   airflow-init:
-    image: apache/airflow:2.8.0
+    image: apache/airflow:3.1.8
     depends_on: [postgres, redis]
     environment:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -25,7 +25,7 @@ services:
     command: airflow db migrate
 
   airflow-webserver:
-    image: apache/airflow:2.8.0
+    image: apache/airflow:3.1.8
     depends_on: [airflow-init]
     ports:
       - "8282:8080"
@@ -38,10 +38,11 @@ services:
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
-    command: webserver
+      - ./requirements.txt:/requirements.txt
+    command: bash -c "pip install --only-binary=pandas -r /requirements.txt && airflow api-server"
 
   airflow-scheduler:
-    image: apache/airflow:2.8.0
+    image: apache/airflow:3.1.8
     depends_on: [airflow-init]
     environment:
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -51,7 +52,8 @@ services:
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
-    command: scheduler
+      - ./requirements.txt:/requirements.txt
+    command: bash -c "pip install --only-binary=pandas -r /requirements.txt && airflow scheduler" 
 
 volumes:
   postgres_data:

@@ -1,0 +1,10 @@
+# Data processing
+pandas==2.2.2
+python-dotenv==1.0.0
+
+#database
+sqlalchemy==2.0.23
+psycopg2-binary
+
+#utilities 
+requests==2.31.0
