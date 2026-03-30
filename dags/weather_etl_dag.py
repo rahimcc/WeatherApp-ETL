@@ -3,7 +3,8 @@ from airflow.providers.standard.operators.python import PythonOperator
 from dotenv import load_dotenv
 from pathlib import Path
 from datetime import datetime,timedelta
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine,text
+
 
 import requests
 import psycopg2
@@ -63,7 +64,9 @@ def extract(**context):
             'feels_like_c': data['main']['feels_like'],
             'humidity_pct': data['main']['humidity'],
             'wind_speed_ms': data['wind']['speed'],
-            'weather_desc': data['weather'][0]['description']
+            'weather_desc': data['weather'][0]['description'],
+            'recorded_at': data['dt'],
+            'ingested_at': pd.Timestamp.now(tz='UTC')
         })
 
          #  context['ti'].xcom_push(key="raw_records", value=records)
@@ -78,8 +81,8 @@ def extract(**context):
     engine = create_engine(DB_CONN)
 
     with engine.begin() as conn:
-        df.to_sql("weather_raw", conn, if_exists="replace", index=False)
 
+        df.to_sql("weather_raw", conn, if_exists="replace", index=False)
         print(f'Extracted: {len(records[0])} records')
         #return records
 
@@ -90,18 +93,48 @@ def transform(**context):
     # records = context["ti"].xcom_pull(key="raw_records", task_ids="extract")
     engine = create_engine(DB_CONN)
 
-    df = pd.DataFrame(records)
+    records = pd.read_sql("SELECT * FROM weather_raw",engine)
 
+    df = pd.DataFrame(records)
 
     # Drop duplicates on city + recorded_at
     df = df.drop_duplicates(subset=["city","recorded_at"])
 
     # Validate temperature range (-90 to 60 is psycally possible)
     df = df[df["temperature_c"].between(-90,60)]
-
-    # Cast types 
+    # Validate humidity range (0 , 100 )
+    df = df[df['humidity_pct'].between(0,100)]
+    # Epoch to Human Readable format 
+    df['recorded_at'] = pd.to_datetime(df['recorded_at'],unit='s')
     
 
+    df.to_sql('weather_clean',engine, if_exists="append", index=False)
+
+    print("Successfully transformed. ")
+
+def load(**context):
+    engine = create_engine(DB_CONN)
+    
+    upsert_query = """
+                    INSERT INTO weather_daily_agg ( city, date , avg_temp_c, max_temp_c, avg_humidity)
+                        SELECT
+                                city,
+                                DATE(recorded_at) as date,
+                                ROUND(AVG(temperature_c)::NUMERIC,2) as avg_temperature,
+                                MAX(temperature_c) as max_temperature,
+                                ROUND(AVG(humidity_pct)::NUMERIC,2) as avg_humidity
+                        FROM weather_clean
+                        WHERE DATE(recorded_at) = CURRENT_DATE
+                        GROUP BY city, DATE(recorded_at)
+                        ON CONFLICT (city, date)
+                            DO UPDATE SET
+                                avg_temp_c  = EXCLUDED.avg_temp_c,
+                                max_temp_c  = EXCLUDED.max_temp_c,
+                                min_temp_c  = EXCLUDED.min_temp_c,
+                                avg_humidity = EXCLUDED.avg_humidity
+                   """
+    with engine.begin() as conn:
+        conn.execute(text(upsert_query))
 
 with  DAG ( 
     dag_id = "weather_etl",
@@ -115,6 +148,7 @@ with  DAG (
 
     t_transform = PythonOperator(task_id="transform", python_callable = transform)
 
+    t_aggr = PythonOperator(task_id="load", python_callable = load)
 
 if __name__ == "__main__":
     dag.test()
