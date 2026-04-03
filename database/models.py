@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer , Float , String , DateTime, JSON
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-from datetime import datetime
+from datetime import datetime , timezone
 from dotenv import load_dotenv
 import os
 
@@ -20,22 +20,38 @@ class WeatherRaw(Base):
     city          = Column(String(50))
     country       = Column(String(50))
     raw_data      = Column(JSON)
-    ingested_at   = Column(DateTime, default=datetime.utcnow)
+    ingested_at   = Column(DateTime, default= datetime.now(timezone.utc))
 
 
+    def to_dict(self):
+        return { 
+            'id': self.id,
+            'city': self.city, 
+            'country': self.country,
+            'raw_data': self.raw_data,
+            'ingested_at': str(self.ingested_at)
+        }
 
 
 class WeatherClean(Base):
-    __table__ = "weather_clean"
+    __tablename__   = "weather_clean"
 
-    id        = Column(Integer, primary_key=True)
+    id              = Column(Integer, primary_key=True)
+    city            = Column(String(50))
+    country         = Column(String(50))
+    temperature_c   = Column(Float)
+    feels_like_c    = Column(Float)
+    humidity        = Column(Float)
+    description     = Column(String(50))
+
 
 
 
 class WeatherAgg(Base): 
-    __table__ = "weather_agg"
+    __tablename__ = "weather_agg"
 
     id        = Column(Integer, primary_key=True)
+
 
 
 
@@ -48,8 +64,12 @@ def create_tables():
 
     engine = get_engine()
 
-    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
+
+def get_session():
+    engine = get_engine()
+    SessionLocal = sessionmaker(bind=engine)
+    return SessionLocal
 
 
 if __name__ == "__main__":
