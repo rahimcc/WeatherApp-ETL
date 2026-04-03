@@ -12,5 +12,5 @@ def summary():
                   city,
                   avg_temp_c,
                   max_temp_c
-            FROM weather_daily_agg
+            FROM weather_daily_agg                 
 """)
