@@ -55,7 +55,7 @@ def fetch_and_save_raw():
         
         engine = get_engine()
         ingested_at = datetime.now(timezone.utc)
-        
+        print(f'Ingestion time: {ingested_at}')
         with Session(engine) as session:
        
             records = [  WeatherRaw(city = city, country= country,
@@ -95,7 +95,8 @@ def transform_to_clean(ingested_at):
         
         new_record = WeatherClean( id = id , city=city, country = country, \
                                   temperature_c = temperature_c , feels_like_c = feels_like_c,\
-                                  humidity = humidity , description= description
+                                  humidity = humidity , description= description,\
+                                 ingested_at= ingested_at
                                   )
         session.add(new_record)
         session.commit()
