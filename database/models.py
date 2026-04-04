@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer , Float , String , DateTime, JSON
+from sqlalchemy import create_engine, Column, Integer , Float , String , DateTime, JSON, event
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from datetime import datetime , timezone
@@ -29,7 +29,7 @@ class WeatherRaw(Base):
             'city': self.city, 
             'country': self.country,
             'raw_data': self.raw_data,
-            'ingested_at': str(self.ingested_at)
+            'ingested_at': self.ingested_at
         }
 
 
@@ -43,9 +43,19 @@ class WeatherClean(Base):
     feels_like_c    = Column(Float)
     humidity        = Column(Float)
     description     = Column(String(50))
+    ingested_at     = Column(DateTime(timezone=True))
 
-
-
+    def to_dict(self):
+        return { 
+            'id': self.id,
+            'city': self.city, 
+            'country': self.country,
+            'temperature_c': self.temperature_c, 
+            'feels_like_c': self.feels_like_c,
+            'humidity': self.humidity,
+            'description': self.description,
+            'ingested_at': str(self.ingested_at)
+        }
 
 class WeatherAgg(Base): 
     __tablename__ = "weather_agg"
@@ -57,13 +67,18 @@ class WeatherAgg(Base):
 
 def get_engine():
 
-    return create_engine(os.getenv("DATABASE_URL"))
+    engine = create_engine(os.getenv("DATABASE_URL"))
+    @event.listens_for(engine, "connect")
+    def set_timezone(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("SET timezone = 'UTC'")
+        cursor.close()
+    return engine
 
 
 def create_tables():
 
     engine = get_engine()
-
     Base.metadata.create_all(engine)
 
 def get_session():
